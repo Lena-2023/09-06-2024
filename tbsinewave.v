@@ -7,25 +7,24 @@ reg reset;
 
 wire [31:0]cnt;
 wire cnt_edge;
-wire  [15:0]sin_val;  //signed
+wire [15:0]sin_val;
 
 
 integer freq = 0;
 real my_time = 0;
 real sin_real = 0;
+sin_val = 0;
 
 sinewave sin1(clk, reset, cnt, cnt_edge, sin_val);
 
-//function real sin;
-
 //assume basic clock is 10Mhz
-//reg clk;
+
 initial clk=0;
 always
   #0.05 clk = ~clk;
 
 //make reset signal at begin of simulation
-//reg reset;
+
 initial
 begin
   reset = 1;
@@ -38,17 +37,8 @@ begin
   $dumpfile("out.vcd");
   $dumpvars(0,tbsinewave);
   my_time=0;
-
   
   freq=500;
-  #10000;
- /* freq=1000;
-  #10000;
-  freq=1500;
-  #10000; */
-
-
-
 
   $finish;
 end

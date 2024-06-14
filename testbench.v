@@ -1,13 +1,21 @@
-module sinewave(
-input wire clk,
-input wire reset,
+`timescale 1us / 1ns
 
-output reg [31:0]cnt,
-output reg cnt_edge,
-output reg signed [15:0]sin_val
-);
+module testbench();
 
-integer freq = 0;
+//assume basic clock is 10Mhz
+reg clk;
+initial clk=0;
+always
+  #0.05 clk = ~clk;
+
+//make reset signal at begin of simulation
+reg reset;
+initial
+begin
+  reset = 1;
+  #0.1;
+  reset = 0;
+end
 
 //function calculating sinus
 function real sin;
@@ -38,16 +46,16 @@ real x1,y,y2,y3,y5,y7,sum,sign;
  end
 endfunction
 
-
 //generate requested "freq" digital
-
+integer freq;
+reg [31:0]cnt;
+reg cnt_edge;
 always @(posedge clk or posedge reset)
 begin
   if(reset)
   begin
-   cnt <= 0;
+   cnt <=0;
    cnt_edge <= 1'b0;
-   //sin_val <= 0;
   end
   else
   if( cnt>=(10000000/(freq*64)-1) )
@@ -64,7 +72,7 @@ end
 
 real my_time;
 real sin_real;
-
+reg signed [15:0]sin_val;
 
 //generate requested "freq" sinus
 always @(posedge cnt_edge)
@@ -74,4 +82,23 @@ begin
   my_time  <= my_time+3.14159265*2/64;
 end
 
+initial
+begin
+  $dumpfile("out.vcd");
+  $dumpvars(0,testbench);
+  my_time=0;
+
+  
+  freq=500;
+  #10000;
+ /* freq=1000;
+   #10000;
+  freq=1500;
+   #10000;
+*/
+
+
+
+  $finish;
+end
 endmodule
